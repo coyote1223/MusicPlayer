@@ -276,19 +276,7 @@ public class CPlayer extends JFrame implements ActionListener, Runnable {
 				}
 
 				var list = listValues.stream().filter(checkListItem -> !checkListItem.isSelected())
-						.map(checkListItem -> checkListItem.getSong()).collect(Collectors.toList()); // leave
-																										// the
-																										// ones
-																										// that
-																										// are
-																										// not
-																										// selected
-																										// and
-																										// return
-																										// them
-																										// as
-																										// Song
-																										// objects
+						.map(checkListItem -> checkListItem.getSong()).collect(Collectors.toList()); 
 
 				// add/leave in the list the song that is currently being played
 				if (song != null && list.contains(song) == false) {
