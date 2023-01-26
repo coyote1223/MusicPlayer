@@ -56,6 +56,9 @@ import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.tika.Tika;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.mp3.MP3File;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.Media;
@@ -1258,42 +1261,38 @@ public class CPlayer extends JFrame implements ActionListener, Runnable {
 								AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(song.getFile());
 								AudioFormat format = audioInputStream.getFormat();
 								long frames = audioInputStream.getFrameLength();
+								
+								System.out.println("FRAMES: " + frames);
 								totalTimeInSeconds = (frames + 0.0) / format.getFrameRate();
+								
+								System.out.println("TOTAL SONG TIME IN SECONDS: " + totalTimeInSeconds);
 
 								totalTimeInSeconds = Math.ceil(totalTimeInSeconds); // make it a round double
+								System.out.println("TOTAL SONG TIME IN SECONDS (CEILED): " + totalTimeInSeconds);
+								
+								
 								totalSongTime = (int) totalTimeInSeconds - 1; // converting the double to an int
 
 								songSlider.setMaximum(totalSongTime);
 
-								System.out.println(totalTimeInSeconds);
+								System.out.println("TOTAL TIME IN MINUTES: " + totalSongTime / 60);
 
 							}
 
 							else if (song.getExtension().equals(".mp3")) {
-
-								Header header = null;
-								FileInputStream fileInputStream = null;
-								Bitstream bitStream = null;
-								long size = 0;
-
-								try {
-									fileInputStream = new FileInputStream(song.getFile());
-									bitStream = new Bitstream(fileInputStream);
-									header = bitStream.readFrame();
-									size = fileInputStream.getChannel().size();
-
-								} catch (IOException ex) {
-									ex.printStackTrace();
-								}
-
-								totalTimeInSeconds = header.total_ms((int) size) / 1000;
+	
+								MP3File mp3File = new MP3File(song.getFullPathAsString()); // Class imported from jaudiotagger.jar 
+								
+								totalTimeInSeconds = mp3File.getAudioHeader().getTrackLength();
+																
+								System.out.println("TOTAL SONG TIME BEFORE CEILING: " + totalTimeInSeconds);
 
 								totalTimeInSeconds = Math.ceil(totalTimeInSeconds); // make it a round double
-								totalSongTime = (int) totalTimeInSeconds - 1; // converting the double to an int
+								totalSongTime = (int) totalTimeInSeconds; // converting the double to an int
 
 								songSlider.setMaximum(totalSongTime);
 
-								System.out.println(totalTimeInSeconds);
+								System.out.println(totalTimeInSeconds); // needs to be around 276
 
 							}
 
